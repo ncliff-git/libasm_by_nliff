@@ -1,29 +1,44 @@
-NAME = libasm.a
+NAME	=	libasm.a
 
-SRC = src/ft_strlen.s
+SRC		=	src/ft_strlen.s \
+			src/ft_strcpy.s \
+			src/ft_strcmp.s \
+			src/ft_write.s \
+			src/ft_read.s \
+			src/ft_strdup.s
 
-OBJ	= $(patsubst src/%.s, obj/%.o, $(SRC))
+OBJ		=	$(patsubst src/%.s, obj/%.o, $(SRC))
 
-DIR_OBJ = obj
+HEADER	=	libasm.h
 
-MKDIR = mkdir -p
+DIR_OBJ	=	obj
 
-all: $(DIR_OBJ) $(NAME)
+MKDIR	=	mkdir -p
 
-obj/%.o:	src/%.s
-	nasm -fmacho64 -I libasm.h $< -o $@
+all:		$(DIR_OBJ) $(NAME)
 
-$(NAME):	$(OBJ) $(SRC)
-	ar rc $(NAME) $(OBJ)
-	ranlib $(NAME)
+obj/%.o:	src/%.s $(HEADER)
+	@nasm -fmacho64 -I $(HEADER) $< -o $@
+
+$(NAME):	$(HEADER) $(OBJ) $(SRC)
+	@ar rc $(NAME) $(OBJ)
+	@ranlib $(NAME)
+	@echo '$(cgreen)$(NAME) compile!$(cwhite)'
 
 $(DIR_OBJ):
-	$(MKDIR) $@
+	@$(MKDIR) $@
+	@echo '$(cgreen)$(DIR_OBJ) create!$(cwhite)'
 
 clean:
-	rm -rf $(DIR_OBJ)
+	@rm -rf $(DIR_OBJ)
+	@echo '$(ccred)$(DIR_OBJ) del$(cwhite)'
 
 fclean: clean
-	rm -rf $(NAME)
+	@rm -rf $(NAME)
+	@echo '$(ccred)$(NAME) del$(cwhite)'
 
 re: fclean all
+
+cgreen	=	$(shell echo "\033[1;32m")
+ccred	=	$(shell echo "\033[1;31m")
+cwhite	=	$(shell echo "\033[0;0m")
